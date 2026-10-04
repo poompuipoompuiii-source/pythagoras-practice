@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pythagoras-practice-v1</title>
+<style>
+/* === STYLE START === */
+:root{
+  --leaf:#4f7f3f;--leaf-dark:#355b2b;--cream:#fff9e8;--yellow:#f6df8b;
+  --carrot:#e98b3a;--ink:#24352a;--muted:#657266;--line:#d8d2b8;
+  --white:#fffdf5;--danger:#a93c32;--ok:#34734a;--blue:#4c7294;
+}
+*{box-sizing:border-box}
+html{background:#efe9d7}
+body{margin:0;font-family:Tahoma,"Noto Sans Thai",sans-serif;color:var(--ink);background:var(--cream);line-height:1.55}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #315f8b;outline-offset:2px}
+.app{max-width:1180px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,#dfeecf,#fff4bd);border:2px solid #c7d8b4;border-radius:20px;padding:18px 20px;box-shadow:0 5px 18px #5b6b4520}
+h1{margin:0 0 5px;font-size:clamp(1.25rem,2.4vw,2rem);color:var(--leaf-dark)}
+h2{margin:0 0 10px;color:var(--leaf-dark);font-size:1.25rem}
+h3{margin:12px 0 7px;color:var(--leaf-dark);font-size:1.05rem}
+p{margin:7px 0}
+.small{font-size:.9rem;color:var(--muted)}
+.notice{background:#fff7d6;border-left:5px solid var(--carrot);padding:10px 12px;border-radius:10px}
+.topbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.field label{display:block;font-weight:700;margin-bottom:4px}
+input[type=text],input[type=number],textarea,select{width:100%;border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px}
+textarea{min-height:92px;resize:vertical}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.tabs button,.btn{border:1px solid #b8c8a8;background:#f5f3df;color:var(--leaf-dark);border-radius:10px;padding:9px 12px;font-weight:700}
+.tabs button[aria-selected=true],.btn.primary{background:var(--leaf);color:white;border-color:var(--leaf-dark)}
+.btn.orange{background:var(--carrot);color:#fff;border-color:#b76524}
+.btn.danger{background:#fff0ed;color:var(--danger);border-color:#e1a29b}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 3px 10px #59633c12}
+.hidden{display:none!important}
+.question{background:#f5f0d9;border-radius:12px;padding:12px;margin:10px 0}
+.options{display:grid;gap:7px}
+.option{display:flex;gap:8px;align-items:flex-start;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.control{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.control-line{display:grid;grid-template-columns:82px 1fr 95px;gap:8px;align-items:center}
+.range{width:100%;accent-color:var(--leaf)}
+.stepper{display:flex;gap:5px}
+.stepper button{width:36px;border:1px solid var(--line);border-radius:8px;background:#f5f0d9}
+.error{color:var(--danger);font-weight:700;min-height:24px}
+.status{padding:8px 10px;border-radius:9px;background:#edf5e9;color:var(--ok);margin-top:8px}
+.visual-wrap{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;overflow:hidden}
+svg{display:block;width:100%;height:auto}
+.mathcards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.mathcard{padding:10px;border-radius:10px;background:#f8f0cf;border:1px solid #e4d89d}
+.mathcard strong{display:block;color:var(--leaf-dark)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:7px;text-align:center;vertical-align:middle}
+th{background:#edf2df;color:var(--leaf-dark)}
+.table-wrap{overflow-x:auto}
+.progressbar{height:12px;background:#ece7d3;border-radius:20px;overflow:hidden}
+.progressbar>span{display:block;height:100%;background:var(--leaf);width:0}
+.graph-wrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lock{padding:12px;border-radius:10px;background:#f4eee0;border:1px dashed #c9bfa1}
+.feedback{padding:11px;border-radius:10px;background:#edf5e9;border-left:5px solid var(--ok);margin-top:8px}
+.feedback.warn{background:#fff4e8;border-left-color:var(--carrot)}
+#report{background:white}
+@media(max-width:760px){
+ .app{padding:10px}.topbar,.controls,.mini-grid,.mathcards{grid-template-columns:1fr}
+ .control-line{grid-template-columns:70px 1fr;}.stepper{grid-column:1/-1}
+ h1{font-size:1.35rem}
+}
+@media print{
+ body{background:white}.app{max-width:none;padding:0}
+ header,.tabs,#explorePanel,#piecesPanel,#practicePanel,.no-print{display:none!important}
+ .panel{box-shadow:none;border:0;padding:5px;margin:0 0 12px}
+ #report{display:block!important}
+ .report-only{display:block!important}
+ table{font-size:10pt;page-break-inside:auto}tr{page-break-inside:avoid}
+ textarea{border:0;padding:0;min-height:50px}
+}
+
+/* === F1-F5 PRACTICE ADDITIONS START === */
+.practice-summary{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#f4eee0;border:1px solid #d8d2b8}.question{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fffdf5}.question h3{margin-top:0}.option{display:block;border:1px solid #ded7bd;border-radius:10px;padding:9px;margin:7px 0;background:#fff}.option:focus-within{outline:3px solid #315f8b;outline-offset:2px}.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer-grid .field{min-width:0}.hint-box{background:#fff4e8;border-left:5px solid var(--carrot);padding:10px 12px;border-radius:10px;margin-top:8px}.explain-box{background:#edf5e9;border-left:5px solid var(--ok);padding:10px 12px;border-radius:10px;margin-top:8px}.practice-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.practice-status{font-weight:700}.practice-status.ok{color:var(--ok)}.practice-status.warn{color:var(--danger)}.practice-extension{border:1px dashed #b8c8a8;border-radius:12px;padding:12px;background:#f7f4e6}.hidden{display:none!important}@media(max-width:760px){.answer-grid{grid-template-columns:1fr}}
+/* === F1-F5 PRACTICE ADDITIONS END === */
+/* === STYLE END === */
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>ทฤษฎีบทพีทาโกรัส: สำรวจพื้นที่บนด้านทั้งสาม</h1>
+  <p>ปรับสามเหลี่ยมมุมฉาก สำรวจพื้นที่ และจัดชิ้นส่วนเพื่อเชื่อมโยงความสัมพันธ์ของพื้นที่</p>
+  <div class="notice"><strong>ข้อมูลสำคัญ:</strong> คำตอบและผลการสำรวจของคุณจะไม่ถูกส่งออกไปทางอินเทอร์เน็ต ข้อมูลที่บันทึกไว้ในเครื่องนี้เป็นงานของคู่ของคุณ ควรดาวน์โหลดข้อมูลสำรองก่อนเปลี่ยนอุปกรณ์</div>
+  <div class="topbar">
+    <div class="field"><label for="pairCode">รหัสคู่</label><input id="pairCode" type="text" autocomplete="off" placeholder="กรอกรหัสคู่"></div>
+    <div class="field"><label for="grade">ระดับชั้น</label><select id="grade"><option value="ม.ต้น">มัธยมศึกษาตอนต้น</option></select></div>
+    <div><strong>ความคืบหน้า</strong><div class="progressbar" aria-label="ความคืบหน้าการสำรวจ"><span id="progressFill"></span></div><span id="progressText" class="small">ยังไม่ยืนยันคำตอบก่อนสำรวจ</span></div>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="ขั้นตอนกิจกรรม">
+ <button data-tab="predict" aria-selected="true">1 คาดการณ์</button>
+ <button data-tab="explore">2 สำรวจ</button>
+ <button data-tab="pieces">3 จัดชิ้นส่วน</button>
+ <button data-tab="conclude">4 สรุปหลักฐาน</button>
+ <button data-tab="practice">5 แบบฝึก</button>
+ <button data-tab="reportTab">6 รายงาน/สำรอง</button>
+</div>
+
+<section id="predict" class="panel tab-panel">
+<h2>1. คาดการณ์ก่อนสำรวจ</h2>
+<p>ก่อนเปิดพื้นที่สำรวจ ให้เลือกสิ่งที่คุณคาดการณ์ และเขียนเหตุผลของตนเอง</p>
+<div class="question">
+ <div class="options">
+  <label class="option"><input type="radio" name="prediction" value="equal"> พื้นที่สี่เหลี่ยมบนด้าน a และ b รวมกันเท่ากับพื้นที่บนด้าน c</label>
+  <label class="option"><input type="radio" name="prediction" value="different"> พื้นที่ทั้งสามอาจมีความสัมพันธ์แตกต่างจากที่คาด</label>
+  <label class="option"><input type="radio" name="prediction" value="unsure"> ยังไม่แน่ใจ</label>
+ </div>
+ <label for="predictionReason"><strong>เหตุผลก่อนสำรวจ</strong></label>
+ <textarea id="predictionReason" placeholder="เขียนเหตุผลก่อนเปิดสื่อสำรวจ"></textarea>
+ <div class="actions"><button id="confirmPrediction" class="btn primary">ยืนยันคำตอบแรก</button></div>
+ <div id="predictionStatus" class="status hidden" role="status"></div>
+</div>
+</section>
+
+<section id="explore" class="panel tab-panel hidden">
+<h2>2. สำรวจและปรับสามเหลี่ยมมุมฉาก</h2>
+<p>ปรับ a และ b แล้วสังเกตว่า c และพื้นที่ของสี่เหลี่ยมทั้งสามเปลี่ยนอย่างไร มุมฉากคงเดิมเสมอ</p>
+<div class="controls">
+ <div class="control">
+  <div class="control-line"><strong>a</strong><input id="aRange" class="range" type="range" min="1" max="10" step=".5" value="3" aria-label="ปรับความยาวด้าน a"><div class="stepper"><button data-target="a" data-delta="-0.5" aria-label="ลด a">−</button><button data-target="a" data-delta=".5" aria-label="เพิ่ม a">+</button></div></div>
+  <label for="aNumber">a (เซนติเมตร)</label><input id="aNumber" type="number" min="1" max="10" step=".5" value="3">
+  <div id="aError" class="error" aria-live="polite"></div>
+ </div>
+ <div class="control">
+  <div class="control-line"><strong>b</strong><input id="bRange" class="range" type="range" min="1" max="10" step=".5" value="4" aria-label="ปรับความยาวด้าน b"><div class="stepper"><button data-target="b" data-delta="-0.5" aria-label="ลด b">−</button><button data-target="b" data-delta=".5" aria-label="เพิ่ม b">+</button></div></div>
+  <label for="bNumber">b (เซนติเมตร)</label><input id="bNumber" type="number" min="1" max="10" step=".5" value="4">
+  <div id="bError" class="error" aria-live="polite"></div>
+ </div>
+</div>
+<div class="actions">
+ <button id="checkCurrent" class="btn primary">ตรวจค่าพื้นที่ของรูปปัจจุบัน</button>
+ <button id="saveRow" class="btn orange" disabled>บันทึกผลการสำรวจ</button>
+ <button id="toggleGrid" class="btn">เปิด/ปิดกริด</button>
+</div>
+<div id="checkStatus" class="status" role="status">ยังไม่ได้ตรวจค่าพื้นที่ของรูปปัจจุบัน</div>
+<div class="visual-wrap">
+<svg id="geometry" viewBox="0 0 900 600" role="img" aria-label="ภาพสามเหลี่ยมมุมฉากและสี่เหลี่ยมจัตุรัสบนด้านทั้งสาม">
+ <defs><pattern id="gridPattern" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#8a9b78" stroke-width="1"/></pattern></defs>
+ <rect id="gridBg" x="0" y="0" width="900" height="600" fill="url(#gridPattern)" opacity=".28" visibility="hidden"/>
+ <g id="squares"></g><polygon id="tri" points="" fill="#fff4bd" stroke="#355b2b" stroke-width="3"/>
+ <polyline id="rightMark" points="" fill="none" stroke="#355b2b" stroke-width="3"/>
+ <g id="labels"></g>
+</svg>
+</div>
+<div class="mathcards">
+ <div class="mathcard"><strong>ด้าน a</strong><span id="aRead">3</span> ซม. · พื้นที่ <span id="aArea">9</span> ตร.ซม.</div>
+ <div class="mathcard"><strong>ด้าน b</strong><span id="bRead">4</span> ซม. · พื้นที่ <span id="bArea">16</span> ตร.ซม.</div>
+ <div class="mathcard"><strong>ด้าน c</strong><span id="cRead">5</span> ซม. · พื้นที่ <span id="cArea">25</span> ตร.ซม.</div>
+</div>
+<div class="table-wrap" style="margin-top:12px">
+<table id="surveyTable"><thead><tr><th>ลำดับ</th><th>a</th><th>b</th><th>c</th><th>a²</th><th>b²</th><th>c²</th><th>a²+b²</th><th>จัดการ</th></tr></thead><tbody></tbody></table>
+</div>
+<div class="graph-wrap" style="margin-top:12px"><svg id="graph" viewBox="0 0 620 360" role="img" aria-label="กราฟเปรียบเทียบ a²+b² กับ c²"><line x1="60" y1="300" x2="580" y2="300" stroke="#555"/><line x1="60" y1="300" x2="60" y2="35" stroke="#555"/><line id="refLine" x1="60" y1="300" x2="580" y2="35" stroke="#e98b3a" stroke-width="2" stroke-dasharray="7 5"/><g id="points"></g><text x="260" y="348">a²+b² (ตร.ซม.)</text><text x="12" y="185" transform="rotate(-90 12 185)">c² (ตร.ซม.)</text></svg></div>
+</section>
+
+<section id="pieces" class="panel tab-panel hidden">
+<h2>3. จัดชิ้นส่วนพื้นที่</h2>
+<p>โหมดนี้ใช้ชิ้นส่วนหน่วยจากพื้นที่สี่เหลี่ยมบนด้าน a และ b เป็นตัวแทนพื้นที่จริงของสองสี่เหลี่ยมต้นทาง คุณสามารถเลือกชิ้นส่วนแล้วกดหมุน/ย้าย หรือใช้การจัดเรียงอัตโนมัติเป็นตัวช่วยหลังจากลองเองแล้ว</p>
+<div class="notice"><strong>ขอบเขตของรูปแบบนี้:</strong> การจัดเรียงแบบชิ้นส่วนหน่วยทำงานเต็มรูปแบบเมื่อ a, b และ c เป็นจำนวนเต็มและมีค่า \(a^2+b^2=c^2\) เช่น 3–4–5, 5–12–13 และ 6–8–10 หากค่าปัจจุบันไม่เข้าเงื่อนไข โปรแกรมจะไม่แสดงภาพว่าเติมเต็มสำเร็จ แต่ยังสามารถดูพื้นที่ต้นทางและปลายทางได้</div>
+<div class="mathcards">
+ <div class="mathcard"><strong>พื้นที่ต้นทาง a²</strong><span id="pieceA">-</span> ตร.ซม.</div>
+ <div class="mathcard"><strong>พื้นที่ต้นทาง b²</strong><span id="pieceB">-</span> ตร.ซม.</div>
+ <div class="mathcard"><strong>พื้นที่เป้าหมาย c²</strong><span id="pieceC">-</span> ตร.ซม.</div>
+</div>
+<div class="actions">
+ <button id="pieceAuto" class="btn orange">จัดเรียงอัตโนมัติ (ตัวช่วย)</button>
+ <button id="pieceReset" class="btn">เริ่มจัดใหม่</button>
+</div>
+<div id="pieceStatus" class="status" role="status">เลือกชิ้นส่วนในแผงต้นทาง แล้วใช้ปุ่มย้ายหรือหมุน</div>
+<div class="mini-grid">
+ <div class="visual-wrap"><h3>ชิ้นส่วนจากสี่เหลี่ยม a และ b</h3><svg id="pieceSource" viewBox="0 0 420 420" role="application" aria-label="ชิ้นส่วนพื้นที่ต้นทาง"></svg></div>
+ <div class="visual-wrap"><h3>พื้นที่เป้าหมายบนด้าน c</h3><svg id="pieceTarget" viewBox="0 0 420 420" role="application" aria-label="พื้นที่เป้าหมาย"></svg></div>
+</div>
+<div class="actions">
+ <button id="moveLeft" class="btn">ย้ายไปซ้าย</button><button id="moveRight" class="btn">ย้ายไปขวา</button><button id="rotatePiece" class="btn">หมุนชิ้นส่วน</button>
+</div>
+</section>
+
+<section id="conclude" class="panel tab-panel hidden">
+<h2>4. สรุปหลักฐาน</h2>
+<p class="small">เขียนจากข้อมูลที่บันทึกไว้จริง แยกสิ่งที่สังเกตจากกรณีที่ทดลองออกจากการอธิบายความสัมพันธ์ทั่วไป</p>
+<div class="field"><label for="conclusion">1. ข้อสรุปจากการสำรวจ</label><textarea id="conclusion" placeholder="เขียนข้อสรุปของคุณ"></textarea></div>
+<div class="field"><label for="evidence">2. หลักฐานจากตารางหรือกราฟที่สนับสนุนข้อสรุป</label><textarea id="evidence" placeholder="ระบุข้อมูลหรือกรณีที่ใช้สนับสนุน"></textarea></div>
+<div class="field"><label for="wonder">3. สิ่งที่ยังสงสัยหรืออยากสำรวจต่อ</label><textarea id="wonder" placeholder="เขียนสิ่งที่อยากสำรวจต่อ"></textarea></div>
+<div class="actions"><button id="saveText" class="btn primary">บันทึกข้อสรุปและหลักฐาน</button></div>
+<div id="textStatus" class="status hidden" role="status"></div>
+</section>
+
+<section id="practice" class="panel tab-panel hidden">
+<h2>5. แบบฝึกระหว่างเรียน F1–F5</h2>
+<div id="practiceLock" class="lock">สำรวจข้อมูลให้ครบตามเกณฑ์เดิม และเขียนข้อสรุปพร้อมหลักฐานก่อนเปิดแบบฝึก</div>
+<div id="practiceContent" class="hidden">
+ <div class="notice">แบบฝึก F1–F5 ใช้สำหรับตรวจสอบระหว่างเรียนและให้ Feedback ไม่บวกคะแนนเข้าเกณฑ์ประเมินหลัก 10 คะแนนโดยอัตโนมัติ</div>
+ <div class="practice-summary" aria-live="polite">
+  <span class="badge" id="practiceCheckedCount">ตรวจแล้ว 0/5 ข้อ</span>
+  <span class="badge" id="practicePendingCount">คำตอบแก้ไขค้างตรวจ 0 ข้อ</span>
+  <span class="badge" id="practiceCompletionStatus">ยังไม่ครบเงื่อนไขต่อไป</span>
+ </div>
+
+ <div class="question" id="qF1">
+  <h3>F1: หาความยาวด้านและพื้นที่จากสามเหลี่ยมมุมฉาก</h3>
+  <p>กำหนดสามเหลี่ยมมุมฉากที่มีด้านประกอบมุมฉากยาว a = 3 เซนติเมตร และ b = 4 เซนติเมตร จงหาความยาวด้านตรงข้ามมุมฉาก c และพื้นที่สี่เหลี่ยมจัตุรัสบนด้านทั้งสาม</p>
+  <div class="answer-grid">
+   <div class="field"><label for="f1c">ความยาว c (เซนติเมตร)</label><input id="f1c" type="text" inputmode="decimal" autocomplete="off"></div>
+   <div class="field"><label for="f1c2">พื้นที่สี่เหลี่ยมจัตุรัสบนด้าน c (ตารางเซนติเมตร)</label><input id="f1c2" type="text" inputmode="decimal" autocomplete="off"></div>
+  </div>
+  <div class="practice-actions"><button id="f1Check" class="btn primary">ตรวจคำตอบ</button><button id="f1Hint" class="btn">แสดงคำใบ้</button><button id="f1Show" class="btn orange">แสดงเฉลย</button></div>
+  <div id="f1HintBox" class="hint-box hidden" role="status"></div><div id="f1Feedback" class="feedback hidden" role="status"></div>
+ </div>
+
+ <div class="question" id="qF2">
+  <h3>F2: ความสัมพันธ์ของพื้นที่สี่เหลี่ยมบนด้านทั้งสาม</h3>
+  <p>สามเหลี่ยมมุมฉากคู่ใดแสดงความสัมพันธ์ว่า ผลรวมพื้นที่สี่เหลี่ยมจัตุรัสบนด้านประกอบมุมฉากทั้งสองเท่ากับพื้นที่สี่เหลี่ยมจัตุรัสบนด้านตรงข้ามมุมฉาก?</p>
+  <div class="options"><label class="option"><input type="radio" name="f2" value="a"> ก. ด้าน 3, 4, 5 หน่วย เพราะ 9 + 16 = 25</label><label class="option"><input type="radio" name="f2" value="b"> ข. ด้าน 3, 4, 6 หน่วย เพราะ 9 + 16 = 25</label><label class="option"><input type="radio" name="f2" value="c"> ค. ด้าน 3, 4, 7 หน่วย เพราะ 9 + 16 = 25</label></div>
+  <div class="practice-actions"><button id="f2Check" class="btn primary">ตรวจคำตอบ</button><button id="f2Hint" class="btn">แสดงคำใบ้</button><button id="f2Show" class="btn orange">แสดงเฉลย</button></div>
+  <div id="f2HintBox" class="hint-box hidden" role="status"></div><div id="f2Feedback" class="feedback hidden" role="status"></div>
+ </div>
+
+ <div class="question" id="qF3">
+  <h3>F3: การเปลี่ยนความยาวด้านและพื้นที่</h3>
+  <p>กำหนดสามเหลี่ยมมุมฉากที่ด้านประกอบมุมฉากด้านหนึ่งยาว 3 เซนติเมตร และอีกด้านยาว 4 เซนติเมตร หากเพิ่มด้านยาว 4 เซนติเมตรเป็น 5 เซนติเมตร โดยคงด้านยาว 3 เซนติเมตรไว้ ด้านตรงข้ามมุมฉากจะเปลี่ยนอย่างไร?</p>
+  <div class="options"><label class="option"><input type="radio" name="f3" value="a"> ก. เพิ่มจาก 5 เป็น √34 เซนติเมตร</label><label class="option"><input type="radio" name="f3" value="b"> ข. ลดจาก 5 เป็น √34 เซนติเมตร</label><label class="option"><input type="radio" name="f3" value="c"> ค. คงเดิมที่ 5 เซนติเมตร</label></div>
+  <div class="practice-actions"><button id="f3Check" class="btn primary">ตรวจคำตอบ</button><button id="f3Hint" class="btn">แสดงคำใบ้</button><button id="f3Show" class="btn orange">แสดงเฉลย</button></div>
+  <div id="f3HintBox" class="hint-box hidden" role="status"></div><div id="f3Feedback" class="feedback hidden" role="status"></div>
+ </div>
+
+ <div class="question" id="qF4">
+  <h3>F4: การอ่านกราฟความสัมพันธ์ของพื้นที่</h3>
+  <p>กราฟกำหนดแกนนอนเป็น a² + b² (ตารางเซนติเมตร) และแกนตั้งเป็น c² (ตารางเซนติเมตร) จุด (25,25) หมายถึงอะไร?</p>
+  <div class="options"><label class="option"><input type="radio" name="f4" value="a"> ก. a² + b² = 25 และ c² = 25 ตารางเซนติเมตร</label><label class="option"><input type="radio" name="f4" value="b"> ข. a = 25 เซนติเมตร และ c = 25 เซนติเมตร</label><label class="option"><input type="radio" name="f4" value="c"> ค. c = 25 ตารางเซนติเมตร และ a² + b² = 25 เซนติเมตร</label></div>
+  <div class="practice-actions"><button id="f4Check" class="btn primary">ตรวจคำตอบ</button><button id="f4Hint" class="btn">แสดงคำใบ้</button><button id="f4Show" class="btn orange">แสดงเฉลย</button></div>
+  <div id="f4HintBox" class="hint-box hidden" role="status"></div><div id="f4Feedback" class="feedback hidden" role="status"></div>
+ </div>
+
+ <div class="question" id="qF5">
+  <h3>F5: การอธิบายและขอบเขตของหลักฐาน</h3>
+  <p>ผู้เรียนทดลองสามเหลี่ยมมุมฉากหลายรูป และพบว่าผลรวมพื้นที่สี่เหลี่ยมบนด้านประกอบมุมฉากทั้งสองเท่ากับพื้นที่สี่เหลี่ยมบนด้านตรงข้ามมุมฉากทุกครั้ง ข้อสรุปใดเหมาะสมที่สุด?</p>
+  <div class="options"><label class="option"><input type="radio" name="f5" value="a"> ก. การทดลองจำนวนจำกัดพิสูจน์ความสัมพันธ์สำหรับสามเหลี่ยมมุมฉากทุกขนาดได้ครบถ้วนแล้ว</label><label class="option"><input type="radio" name="f5" value="b"> ข. ผลการทดลองสนับสนุนข้อคาดการณ์ แต่การพิสูจน์ทั่วไปต้องอาศัยเหตุผลทางคณิตศาสตร์ที่ครอบคลุมสามเหลี่ยมมุมฉากทุกกรณี</label><label class="option"><input type="radio" name="f5" value="c"> ค. ผลการทดลองใช้สนับสนุนข้อคาดการณ์ไม่ได้เลย</label></div>
+  <div class="practice-actions"><button id="f5Check" class="btn primary">ตรวจคำตอบ</button><button id="f5Hint" class="btn">แสดงคำใบ้</button><button id="f5Show" class="btn orange">แสดงเฉลย</button></div>
+  <div id="f5HintBox" class="hint-box hidden" role="status"></div><div id="f5Feedback" class="feedback hidden" role="status"></div>
+ </div>
+
+ <div class="practice-extension">
+  <h3>ส่วนขยาย: จากการทดลองสู่การพิสูจน์</h3>
+  <p>เมื่อพร้อม ผู้เรียนสามารถศึกษาการพิสูจน์ด้วยการจัดเรียงพื้นที่หรือใช้พีชคณิตเพิ่มเติม ส่วนขยายนี้แยกจากผลการตรวจ F1–F5 และไม่เพิ่มคะแนนอัตโนมัติ</p>
+ </div>
+</div>
+</section>
+
+<section id="reportTab" class="panel tab-panel hidden">
+<h2>6. รายงานและสำรองข้อมูล</h2>
+<div class="actions no-print">
+ <button id="backupText" class="btn">แสดงข้อมูลสำรอง</button>
+ <button id="copyBackup" class="btn">คัดลอกข้อมูลสำรอง</button>
+ <button id="downloadJson" class="btn orange">ดาวน์โหลด JSON</button>
+ <label class="btn">นำเข้า JSON <input id="importJson" type="file" accept=".json,application/json" hidden></label>
+ <button id="printReport" class="btn primary">พิมพ์รายงาน</button>
+ <button id="resetAll" class="btn danger">เริ่มใหม่และลบข้อมูล</button>
+</div>
+<textarea id="backupBox" class="no-print hidden" readonly aria-label="ข้อมูลสำรอง JSON"></textarea>
+<div id="report" class="panel">
+<h3>รายงานการสำรวจ</h3>
+<p><strong>รหัสคู่:</strong> <span id="rPair">-</span> &nbsp; <strong>ระดับชั้น:</strong> <span id="rGrade">-</span></p>
+<p><strong>คำตอบก่อนสำรวจ:</strong> <span id="rPrediction">ยังไม่ได้ยืนยัน</span></p>
+<div class="table-wrap"><table><thead><tr><th>ลำดับ</th><th>a</th><th>b</th><th>c</th><th>a²</th><th>b²</th><th>c²</th><th>a²+b²</th></tr></thead><tbody id="reportRows"></tbody></table></div>
+<div class="graph-wrap"><svg id="reportGraph" viewBox="0 0 620 360"></svg></div>
+<h3>ข้อสรุป</h3><p id="rConclusion">-</p>
+<h3>หลักฐาน</h3><p id="rEvidence">-</p>
+<h3>สิ่งที่ยังสงสัย</h3><p id="rWonder">-</p>
+<h3>แบบฝึก</h3><p id="rPractice">ยังไม่มีข้อมูลการตอบแบบฝึก</p>
+<p class="small">วันที่และเวลาสร้างรายงาน: <span id="reportTime">-</span></p>
+</div>
+</section>
+</div>
+
+<script>
+/* === SCRIPT START === */
+(function(){
+"use strict";
+const CONFIG={min:1,max:10,step:.5,initialA:3,initialB:4,storageKey:"pythagoras-practice-v1-data"};
+const state={
+ pairCode:"",grade:"ม.ต้น",a:3,b:4,prediction:null,predictionReason:"",
+ survey:[],checked:false,conclusion:"",evidence:"",wonder:"",practice:{answers:{},firstAnswers:{},attempts:{},hints:{},revealed:{},lastResult:{},dirty:{}},grid:false,
+ piece:{selected:null,placements:{},rotations:{}}
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function num(v){return Number(v);}
+function validValue(v){return Number.isFinite(v)&&v>=CONFIG.min&&v<=CONFIG.max&&Math.abs((v-CONFIG.min)/CONFIG.step-Math.round((v-CONFIG.min)/CONFIG.step))<1e-9;}
+function calc(a,b){const c=Math.sqrt(a*a+b*b);return {a,b,c,a2:a*a,b2:b*b,c2:c*c,sum:a*a+b*b};}
+function fmt(x){return Number.isInteger(x)?String(x):x.toFixed(2).replace(/0+$/,"").replace(/\.$/,"");}
+function saveLocal(){
+ try{localStorage.setItem(CONFIG.storageKey,JSON.stringify(state));return true}
+ catch(e){showGlobalStatus("ไม่สามารถบันทึกข้อมูลลงในเครื่องได้: "+e.message,"warn");return false}
+}
+function loadLocal(){
+ try{const raw=localStorage.getItem(CONFIG.storageKey);if(!raw)return;const d=JSON.parse(raw);Object.assign(state,d); if(!Array.isArray(state.survey))state.survey=[]; if(!state.practice)state.practice={}; if(!state.piece)state.piece={selected:null,placements:{},rotations:{}}}
+ catch(e){showGlobalStatus("ข้อมูลที่บันทึกไว้ไม่สามารถอ่านได้ จึงเริ่มด้วยข้อมูลว่าง","warn")}
+}
+function showGlobalStatus(msg,type="ok"){let el=$("checkStatus");el.textContent=msg;el.className="status"+(type==="warn"?" feedback warn":"");}
+function setValue(which,v){
+ const n=num(v);const err=$(which+"Error");
+ if(!validValue(n)){err.textContent=`กรุณาใส่ค่าระหว่าง ${CONFIG.min}–${CONFIG.max} และเพิ่มครั้งละ ${CONFIG.step} ซม.`;return false}
+ err.textContent="";state[which]=n;state.checked=false;updateGeometry();updatePracticeLock();saveLocal();return true;
+}
+function syncControl(which,v){
+ $(which+"Range").value=v;$(which+"Number").value=v;
+}
+function updateGeometry(){
+ const d=calc(state.a,state.b);state.c=d.c;
+ $("aRead").textContent=fmt(d.a);$("bRead").textContent=fmt(d.b);$("cRead").textContent=fmt(d.c);
+ $("aArea").textContent=fmt(d.a2);$("bArea").textContent=fmt(d.b2);$("cArea").textContent=fmt(d.c2);
+ drawGeometry(d);drawPieces(d);drawGraph();renderSurvey();updateReport();updateProgress();
+ $("saveRow").disabled=!state.checked;
+ $("pieceA").textContent=fmt(d.a2);$("pieceB").textContent=fmt(d.b2);$("pieceC").textContent=fmt(d.c2);
+}
+function drawGeometry(d){
+ const svg=$("geometry"), S=54, ox=250, oy=470;
+ const ax=ox, ay=oy, bx=ox+d.a*S, by=oy, cx=ox, cy=oy-d.b*S;
+ // Keep fixed coordinate scale; if too large, use a fixed transform centered in view.
+ const scale=Math.min(1,350/(Math.max(d.a,d.b)*S));
+ const cx0=450,cy0=315;
+ function T(x,y){return [cx0+(x-ox)*scale,cy0+(y-oy)*scale]}
+ const A=T(ax,ay),B=T(bx,by),C=T(cx,cy);
+ $("tri").setAttribute("points",[A,B,C].map(p=>p.join(",")).join(" "));
+ const rm1=T(ax+24,ay),rm2=T(ax+24,ay-24),rm3=T(ax,ay-24);
+ $("rightMark").setAttribute("points",[rm1,rm2,rm3].map(p=>p.join(",")).join(" "));
+ const g=$("squares"),lab=$("labels");g.innerHTML="";lab.innerHTML="";
+ function poly(points,fill){const p=document.createElementNS("http://www.w3.org/2000/svg","polygon");p.setAttribute("points",points.map(q=>q.join(",")).join(" "));p.setAttribute("fill",fill);p.setAttribute("opacity",".68");p.setAttribute("stroke","#596b48");p.setAttribute("stroke-width","2");g.appendChild(p)}
+ // square outward for AB (downward)
+ poly([A,B,[B[0],B[1]+d.a*S*scale],[A[0],A[1]+d.a*S*scale]],"#f6df8b");
+ // square outward for AC (left)
+ poly([A,C,[C[0]-d.b*S*scale,C[1]],[A[0]-d.b*S*scale,A[1]]],"#e98b3a");
+ // square on hypotenuse: use perpendicular vector outward from C->B
+ const vx=B[0]-C[0],vy=B[1]-C[1], L=Math.hypot(vx,vy), nx=-vy/L*d.c*S*scale, ny=vx/L*d.c*S*scale;
+ // choose normal away from triangle using centroid test
+ const mid=[(B[0]+C[0])/2,(B[1]+C[1])/2], cen=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+ let nn=[nx,ny];const dot=(mid[0]+nn[0]-cen[0])*(mid[0]-cen[0])+(mid[1]+nn[1]-cen[1])*(mid[1]-cen[1]);
+ if(dot<0)nn=[-nn[0],-nn[1]];
+ poly([B,C,[C[0]+nn[0],C[1]+nn[1]],[B[0]+nn[0],B[1]+nn[1]]],"#b8d8a2");
+ function text(x,y,t,fill="#24352a"){const e=document.createElementNS("http://www.w3.org/2000/svg","text");e.setAttribute("x",x);e.setAttribute("y",y);e.setAttribute("font-size","20");e.setAttribute("font-weight","700");e.setAttribute("fill",fill);e.textContent=t;lab.appendChild(e)}
+ text((A[0]+B[0])/2-10,(A[1]+B[1])/2+28,"a");
+ text((A[0]+C[0])/2-35,(A[1]+C[1])/2,"b");
+ text((B[0]+C[0])/2+10,(B[1]+C[1])/2-10,"c");
+ text(A[0]-18,A[1]-12,"90°");
+}
+function drawGraph(){
+ const g=$("graph"), pts=$("points");pts.innerHTML="";
+ const data=state.survey.map(r=>r.sum), max=Math.max(1,...data,...state.survey.map(r=>r.c2));
+ const plot={x:60,y:300,w:520,h:265};const scale= Math.max(1,max)*1.08;
+ $("refLine").setAttribute("x1",plot.x);$("refLine").setAttribute("y1",plot.y);
+ $("refLine").setAttribute("x2",plot.x+plot.w);$("refLine").setAttribute("y2",plot.y-plot.h);
+ state.survey.forEach((r,i)=>{
+  const x=plot.x+(r.sum/scale)*plot.w,y=plot.y-(r.c2/scale)*plot.h;
+  const c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("cx",x);c.setAttribute("cy",y);c.setAttribute("r",6);c.setAttribute("fill","#4f7f3f");c.setAttribute("aria-label",`จุดที่ ${i+1}`);
+  pts.appendChild(c);
+ });
+}
+function renderSurvey(){
+ const body=$("surveyTable").querySelector("tbody");body.innerHTML="";
+ state.survey.forEach((r,i)=>{
+  const tr=document.createElement("tr");tr.innerHTML=`<td>${i+1}</td><td>${fmt(r.a)}</td><td>${fmt(r.b)}</td><td>${fmt(r.c)}</td><td>${fmt(r.a2)}</td><td>${fmt(r.b2)}</td><td>${fmt(r.c2)}</td><td>${fmt(r.sum)}</td><td><button class="btn danger delete-row" data-i="${i}">ลบ</button></td>`;body.appendChild(tr);
+ });
+ body.querySelectorAll(".delete-row").forEach(b=>b.addEventListener("click",()=>{const i=Number(b.dataset.i);if(confirm("ต้องการลบแถวนี้หรือไม่")){state.survey.splice(i,1);saveLocal();updateGeometry()}}));
+}
+function duplicate(a,b){return state.survey.some(r=>r.a===a&&r.b===b)||state.survey.some(r=>r.a===b&&r.b===a);}
+function checkCurrent(){
+ const d=calc(state.a,state.b);state.checked=true;$("checkStatus").textContent=`ตรวจแล้ว: a²+b² = ${fmt(d.sum)} และ c² = ${fmt(d.c2)} ตารางเซนติเมตร`;
+ $("checkStatus").className="status";$("saveRow").disabled=false;saveLocal();updateProgress();
+}
+function saveRow(){
+ if(!state.checked){showGlobalStatus("ต้องกด “ตรวจค่าพื้นที่ของรูปปัจจุบัน” ก่อนบันทึก","warn");return}
+ if(duplicate(state.a,state.b)){showGlobalStatus("คู่นี้ถูกบันทึกแล้ว โดยการสลับ a,b ถือเป็นกรณีเดียวกัน","warn");return}
+ const d=calc(state.a,state.b);state.survey.push({...d});state.checked=false;saveLocal();updateGeometry();
+}
+function updateProgress(){
+ let n=0;if(state.prediction)n++;if(state.survey.length>=1)n++;if(state.survey.length>=3)n++;if(state.conclusion.trim())n++;
+ $("progressFill").style.width=(n/4*100)+"%";
+ $("progressText").textContent=state.prediction?`ยืนยันคำตอบก่อนสำรวจแล้ว · บันทึก ${state.survey.length} รูป`: "ยังไม่ยืนยันคำตอบก่อนสำรวจ";
+}
+function surveyReadyForPractice(){
+ return state.survey.length>=3 && !!state.conclusion.trim() && !!state.evidence.trim();
+}
+function ensurePracticeState(){
+ if(!state.practice||typeof state.practice!=="object")state.practice={};
+ ["answers","firstAnswers","attempts","hints","revealed","lastResult","dirty"].forEach(k=>{if(!state.practice[k]||typeof state.practice[k]!=="object")state.practice[k]={};});
+}
+function updatePracticeLock(){
+ ensurePracticeState();
+ const ready=surveyReadyForPractice();
+ $("practiceLock").classList.toggle("hidden",ready);$("practiceContent").classList.toggle("hidden",!ready);
+ if(ready) renderPracticeSummary();
+}
+function confirmPrediction(){
+ const choice=document.querySelector('input[name="prediction"]:checked');
+ if(!choice){$("predictionStatus").textContent="กรุณาเลือกคำตอบก่อนสำรวจ";$("predictionStatus").classList.remove("hidden");return}
+ state.prediction=choice.value;state.predictionReason=$("predictionReason").value;
+ $("predictionStatus").textContent="บันทึกคำตอบแรกแล้ว สามารถไปสำรวจได้ โดยคำตอบนี้จะไม่ถูกเขียนทับ";
+ $("predictionStatus").classList.remove("hidden");saveLocal();updateProgress();
+}
+function saveText(){state.conclusion=$("conclusion").value;state.evidence=$("evidence").value;state.wonder=$("wonder").value;saveLocal();$("textStatus").textContent="บันทึกข้อสรุปและหลักฐานแล้ว";$("textStatus").classList.remove("hidden");updateProgress();updatePracticeLock();updateReport();}
+function predText(){return {equal:"พื้นที่สี่เหลี่ยมบนด้าน a และ b รวมกันเท่ากับพื้นที่บนด้าน c",different:"พื้นที่ทั้งสามอาจมีความสัมพันธ์แตกต่างจากที่คาด",unsure:"ยังไม่แน่ใจ"}[state.prediction]||"ยังไม่ได้ยืนยัน";}
+function buildBackup(){return JSON.stringify({...state,c:calc(state.a,state.b).c},null,2)}
+function downloadJson(){const blob=new Blob([buildBackup()],{type:"application/json;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="pythagoras-practice-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function importData(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.survey)||typeof d.practice!=="object")throw new Error("รูปแบบข้อมูลไม่ถูกต้อง");if(!confirm("ต้องการนำเข้าข้อมูลนี้และแทนที่ข้อมูลที่มีอยู่ในเครื่องหรือไม่"))return;Object.assign(state,d);ensurePracticeState();saveLocal();syncControl("a",state.a);syncControl("b",state.b);updateAll();alert("นำเข้าข้อมูลสำเร็จ")}catch(e){alert("นำเข้าข้อมูลไม่ได้: "+e.message)}};r.readAsText(file)}
+function safeText(el,text){el.textContent=text||"-"}
+function updateReport(){
+ safeText($("rPair"),state.pairCode||"-");safeText($("rGrade"),state.grade||"ม.ต้น");safeText($("rPrediction"),predText());
+ const body=$("reportRows");body.innerHTML="";
+ state.survey.forEach((r,i)=>{const tr=document.createElement("tr");[i+1,r.a,r.b,r.c,r.a2,r.b2,r.c2,r.sum].forEach(v=>{const td=document.createElement("td");td.textContent=fmt(v);tr.appendChild(td)});body.appendChild(tr)});
+ safeText($("rConclusion"),state.conclusion);safeText($("rEvidence"),state.evidence);safeText($("rWonder"),state.wonder);
+ ensurePracticeState();const parts=Object.keys(PRACTICE).map(k=>{const a=state.practice.answers[k];const first=state.practice.firstAnswers[k];const r=state.practice.lastResult[k]||"ยังไม่ตรวจ";const at=state.practice.attempts[k]||0;const hi=state.practice.hints[k]||0;const rv=state.practice.revealed[k]?"เปิดเฉลย":"ไม่เปิดเฉลย";const show=v=>typeof v==="object"?JSON.stringify(v):String(v??"-");return `${k}: คำตอบแรก=${show(first)}; คำตอบล่าสุด=${show(a)}; ผลล่าสุด=${r}; ครั้งตรวจ=${at}; คำใบ้=${hi}; ${rv}`;});$("rPractice").textContent=parts.join(" | ")||"ยังไม่มีข้อมูลการตอบแบบฝึก";
+ $("reportTime").textContent=new Date().toLocaleString("th-TH");
+ drawReportGraph();
+}
+function drawReportGraph(){
+ const g=$("reportGraph");g.innerHTML=`<line x1="60" y1="300" x2="580" y2="300" stroke="#555"/><line x1="60" y1="300" x2="60" y2="35" stroke="#555"/><line x1="60" y1="300" x2="580" y2="35" stroke="#e98b3a" stroke-width="2" stroke-dasharray="7 5"/><text x="260" y="348">a²+b² (ตร.ซม.)</text><text x="12" y="185" transform="rotate(-90 12 185)">c² (ตร.ซม.)</text>`;
+ const max=Math.max(1,...state.survey.map(r=>r.sum),...state.survey.map(r=>r.c2))*1.08;
+ state.survey.forEach(r=>{const c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("cx",60+r.sum/max*520);c.setAttribute("cy",300-r.c2/max*265);c.setAttribute("r",6);c.setAttribute("fill","#4f7f3f");g.appendChild(c)});
+}
+function updateAll(){
+ syncControl("a",state.a);syncControl("b",state.b);$("pairCode").value=state.pairCode||"";$("grade").value=state.grade||"ม.ต้น";
+ if(state.prediction){const r=document.querySelector(`input[name="prediction"][value="${state.prediction}"]`);if(r)r.checked=true;$("predictionReason").value=state.predictionReason||""}
+ $("conclusion").value=state.conclusion||"";$("evidence").value=state.evidence||"";$("wonder").value=state.wonder||"";
+ updateGeometry();updatePracticeLock();restorePracticeInputs();
+}
+function setTab(id){
+ document.querySelectorAll(".tab-panel").forEach(p=>p.classList.add("hidden"));$(id).classList.remove("hidden");
+ document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===id?"true":"false"));
+ if(id==="reportTab")updateReport();
+}
+function setupTabs(){document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)))}
+ // F1–F5 practice system
+ const PRACTICE={
+  f1:{type:"numeric2",fields:["f1c","f1c2"],expected:[5,25],hint:"ตรวจสอบว่ากำลังสองของด้านตรงข้ามมุมฉากเท่ากับผลบวกกำลังสองของอีกสองด้าน",feedback:"จากทฤษฎีบทพีทาโกรัส 3²+4²=c² จึงได้ 9+16=25 และ c=√25=5 เซนติเมตร พื้นที่สี่เหลี่ยมจัตุรัสบนด้าน c เท่ากับ c²=25 ตารางเซนติเมตร",answer:"c = 5 เซนติเมตร และ c² = 25 ตารางเซนติเมตร"},
+  f2:{type:"choice",name:"f2",expected:"a",hint:"คำนวณพื้นที่สี่เหลี่ยมบนด้านแต่ละด้านก่อนเปรียบเทียบ",feedback:"ตัวเลือก ก. ใช้ด้าน 3, 4 และ 5 โดย 3²+4²=9+16=25=5² จึงตรงกับความสัมพันธ์ของพื้นที่ทั้งสาม",answer:"ก. ด้าน 3, 4, 5 หน่วย เพราะ 9 + 16 = 25"},
+  f3:{type:"choice",name:"f3",expected:"a",hint:"คำนวณกำลังสองของด้านที่เปลี่ยนใหม่ แล้วเปรียบเทียบกับค่าเดิม",feedback:"เดิม c=√(3²+4²)=5 เซนติเมตร หลังปรับเป็น c=√(3²+5²)=√34 เซนติเมตร ซึ่งมากกว่า 5 เซนติเมตร และพื้นที่บนด้าน c ก็เปลี่ยนตาม c²",answer:"ก. เพิ่มจาก 5 เป็น √34 เซนติเมตร"},
+  f4:{type:"choice",name:"f4",expected:"a",hint:"ตรวจสอบความหมายของแกนนอน แกนตั้ง และหน่วยของพื้นที่",feedback:"แกนนอนเป็น a²+b² และแกนตั้งเป็น c² ซึ่งทั้งคู่เป็นพื้นที่ หน่วยจึงเป็นตารางเซนติเมตร จุด (25,25) หมายถึง a²+b²=25 และ c²=25 ตารางเซนติเมตร",answer:"ก. a² + b² = 25 และ c² = 25 ตารางเซนติเมตร"},
+  f5:{type:"choice",name:"f5",expected:"b",hint:"แยกการสังเกตจากตัวอย่างออกจากการพิสูจน์ทั่วไป",feedback:"การทดลองหลายกรณีช่วยสนับสนุนข้อคาดการณ์ แต่การพิสูจน์ทฤษฎีบทต้องอาศัยเหตุผลทั่วไปที่ครอบคลุมสามเหลี่ยมมุมฉากทุกกรณี ไม่ใช่เพียงตัวอย่างที่ทดลอง",answer:"ข. ผลการทดลองสนับสนุนข้อคาดการณ์ แต่การพิสูจน์ทั่วไปต้องอาศัยเหตุผลทางคณิตศาสตร์ที่ครอบคลุมสามเหลี่ยมมุมฉากทุกกรณี"}
+ };
+ const normalizeDigits=v=>String(v??"").replace(/[๐-๙]/g,d=>String("๐๑๒๓๔๕๖๗๘๙".indexOf(d)));
+ function parsePracticeNumber(v){
+  const t=normalizeDigits(v).trim();
+  if(t===""||!/^[-+]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(t))return null;
+  const n=Number(t);return Number.isFinite(n)?n:null;
+ }
+ function currentPracticeValue(id){return $(id).value;}
+ function practiceKeyHas(key){return Object.prototype.hasOwnProperty.call(state.practice.answers,key);}
+ function markDirty(key){ensurePracticeState();state.practice.dirty[key]=true;state.practice.lastResult[key]=null;const f=$(key+"Feedback");if(f){f.textContent="ยังไม่ได้ตรวจใหม่";f.className="feedback warn";f.classList.remove("hidden");}saveLocal();renderPracticeSummary();updateReport();}
+ function setFirstAnswer(key,value){if(!practiceKeyHas(key))state.practice.firstAnswers[key]=value;}
+ function recordAttempt(key,answer,ok){ensurePracticeState();setFirstAnswer(key,answer);state.practice.answers[key]=answer;state.practice.attempts[key]=(state.practice.attempts[key]||0)+1;state.practice.lastResult[key]=ok?"correct":"incorrect";state.practice.dirty[key]=false;saveLocal();}
+ function showHint(key){ensurePracticeState();state.practice.hints[key]=(state.practice.hints[key]||0)+1;saveLocal();$(key+"HintBox").textContent=PRACTICE[key].hint;$(key+"HintBox").classList.remove("hidden");renderPracticeSummary();}
+ function showAnswer(key){ensurePracticeState();state.practice.revealed[key]=true;saveLocal();$(key+"Feedback").textContent="เฉลย: "+PRACTICE[key].answer;$(key+"Feedback").className="feedback warn";$(key+"Feedback").classList.remove("hidden");renderPracticeSummary();}
+ function renderPracticeSummary(){
+  ensurePracticeState();let checked=0,pending=0;
+  Object.keys(PRACTICE).forEach(k=>{if(state.practice.lastResult[k]==="correct"||state.practice.lastResult[k]==="incorrect")checked++;if(state.practice.dirty[k])pending++;});
+  $("practiceCheckedCount").textContent=`ตรวจแล้ว ${checked}/5 ข้อ`;
+  $("practicePendingCount").textContent=`คำตอบแก้ไขค้างตรวจ ${pending} ข้อ`;
+  const done=checked===5&&pending===0;
+  $("practiceCompletionStatus").textContent=done?"ครบเงื่อนไขแบบฝึกสำหรับภารกิจต่อไป":"ยังไม่ครบเงื่อนไขต่อไป";
+ }
+ function feedbackFor(key,ok){
+  const f=$(key+"Feedback");f.textContent=ok?"ตอบถูกต้อง: "+PRACTICE[key].feedback:"คำตอบยังไม่ถูกต้อง ลองใช้คำใบ้แล้วตรวจคำตอบใหม่ โดยพิจารณา "+PRACTICE[key].hint+"";f.className=ok?"feedback":"feedback warn";f.classList.remove("hidden");
+ }
+ function checkF1(){
+  const a=parsePracticeNumber(currentPracticeValue("f1c")),b=parsePracticeNumber(currentPracticeValue("f1c2"));
+  if(a===null||b===null){$("f1Feedback").textContent="กรุณากรอกตัวเลขให้ครบทั้ง 2 ช่อง โดยไม่ใส่หน่วยหรือข้อความปน";$("f1Feedback").className="feedback warn";$("f1Feedback").classList.remove("hidden");return;}
+  const ok=Math.abs(a-5)<=1e-8&&Math.abs(b-25)<=1e-8;recordAttempt("f1",{c:a,c2:b},ok);feedbackFor("f1",ok);renderPracticeSummary();updateReport();
+ }
+ function checkChoice(key){
+  const r=document.querySelector('input[name="'+PRACTICE[key].name+'"]:checked');
+  if(!r){const f=$(key+"Feedback");f.textContent="กรุณาเลือกคำตอบก่อนตรวจ";f.className="feedback warn";f.classList.remove("hidden");return;}
+  recordAttempt(key,r.value,r.value===PRACTICE[key].expected);feedbackFor(key,r.value===PRACTICE[key].expected);renderPracticeSummary();updateReport();
+ }
+ function bindPractice(){
+  ensurePracticeState();
+  ["f1c","f1c2"].forEach(id=>$(id).addEventListener("input",()=>markDirty("f1")));
+  ["f2","f3","f4","f5"].forEach(key=>document.querySelectorAll('input[name="'+PRACTICE[key].name+'"]').forEach(r=>r.addEventListener("change",()=>markDirty(key))));
+  $("f1Check").addEventListener("click",checkF1);
+  ["f2","f3","f4","f5"].forEach(key=>$(key+"Check").addEventListener("click",()=>checkChoice(key)));
+  Object.keys(PRACTICE).forEach(key=>{
+   $(key+"Hint").addEventListener("click",()=>showHint(key));
+   $(key+"Show").addEventListener("click",()=>showAnswer(key));
+  });
+  restorePracticeInputs();
+ }
+ function restorePracticeInputs(){
+  ensurePracticeState();
+  const f1=state.practice.answers.f1;
+  if(f1&&typeof f1==='object'){$("f1c").value=f1.c??"";$('f1c2').value=f1.c2??"";}
+  ["f2","f3","f4","f5"].forEach(key=>{const v=state.practice.answers[key];if(typeof v==="string"){const r=document.querySelector('input[name="'+PRACTICE[key].name+'"][value="'+v+'"]');if(r)r.checked=true;}});
+  Object.keys(PRACTICE).forEach(key=>{if(state.practice.hints[key]){$(key+"HintBox").textContent=PRACTICE[key].hint;$(key+"HintBox").classList.remove("hidden");}if(state.practice.revealed[key]){$(key+"Feedback").textContent="เฉลย: "+PRACTICE[key].answer;$(key+"Feedback").className="feedback warn";$(key+"Feedback").classList.remove("hidden");}});
+  renderPracticeSummary();
+ }
+
+function bind(){
+ $("pairCode").addEventListener("input",e=>{state.pairCode=e.target.value;saveLocal();updateReport()});
+ $("grade").addEventListener("change",e=>{state.grade=e.target.value;saveLocal();updateReport()});
+ ["a","b"].forEach(k=>{
+  $(k+"Range").addEventListener("input",e=>{syncControl(k,e.target.value);setValue(k,e.target.value)});
+  $(k+"Number").addEventListener("change",e=>{if(setValue(k,e.target.value))syncControl(k,state[k])});
+ });
+ document.querySelectorAll(".stepper button").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.target,v=state[k]+num(b.dataset.delta);if(setValue(k,v))syncControl(k,state[k])}));
+ $("confirmPrediction").addEventListener("click",confirmPrediction);
+ $("checkCurrent").addEventListener("click",checkCurrent);
+ $("saveRow").addEventListener("click",saveRow);
+ $("toggleGrid").addEventListener("click",()=>{state.grid=!state.grid;$("gridBg").setAttribute("visibility",state.grid?"visible":"hidden")});
+ $("saveText").addEventListener("click",saveText);
+ $("backupText").addEventListener("click",()=>{$("backupBox").value=buildBackup();$("backupBox").classList.toggle("hidden")});
+ $("copyBackup").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(buildBackup());alert("คัดลอกข้อมูลสำรองแล้ว")}catch(e){alert("คัดลอกไม่ได้ กรุณาใช้ปุ่มแสดงข้อมูลสำรองแล้วคัดลอกด้วยตนเอง") }});
+ $("downloadJson").addEventListener("click",downloadJson);
+ $("importJson").addEventListener("change",e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value=""});
+ $("printReport").addEventListener("click",()=>{updateReport();window.print()});
+ $("resetAll").addEventListener("click",()=>{if(confirm("ต้องการลบข้อมูลทั้งหมดของสื่อนี้จากเครื่องหรือไม่ ควรดาวน์โหลด JSON ก่อน")){localStorage.removeItem(CONFIG.storageKey);location.reload()}});
+ 
+ $("pieceReset").addEventListener("click",resetPieces);$("pieceAuto").addEventListener("click",autoPieces);
+ $("moveLeft").addEventListener("click",()=>moveSelected(-1));$("moveRight").addEventListener("click",()=>moveSelected(1));$("rotatePiece").addEventListener("click",rotateSelected);
+}
+function pieceKey(i){return "p"+i}
+function isIntegerPythagorean(d){return Number.isInteger(d.a)&&Number.isInteger(d.b)&&Number.isInteger(d.c)&&Math.abs(d.a2+d.b2-d.c2)<1e-8}
+function drawPieces(d){
+ const s=$("pieceSource"),t=$("pieceTarget");s.innerHTML="";t.innerHTML="";
+ const ok=isIntegerPythagorean(d)&&d.c<=16;
+ $("pieceStatus").textContent=ok?`เลือกชิ้นส่วนจากสี่เหลี่ยมต้นทาง แล้วกด “ย้ายไปขวา” เพื่อวางลงในพื้นที่เป้าหมาย ${fmt(d.c2)} ตร.ซม.`:"กรณีปัจจุบันยังไม่รองรับการจัดชิ้นส่วนหน่วยแบบเติมเต็ม จึงไม่แสดงภาพลวงว่าเติมได้";
+ if(!ok)return;
+ state.piece=state.piece||{selected:null,placements:{},rotations:{}};
+ state.piece.placements=state.piece.placements||{};
+ state.piece.rotations=state.piece.rotations||{};
+ const scale=Math.min(32,340/d.c), gap=4;
+ let idx=0;
+ function addRect(parent,x,y,w,h,fill,stroke="#fff"){
+  const r=document.createElementNS("http://www.w3.org/2000/svg","rect");
+  r.setAttribute("x",x);r.setAttribute("y",y);r.setAttribute("width",w);r.setAttribute("height",h);
+  r.setAttribute("fill",fill);r.setAttribute("stroke",stroke);r.setAttribute("stroke-width","1");
+  parent.appendChild(r);return r;
+ }
+ // Source squares: each unit square is a real unit-area piece from a² or b².
+ const maxSource=Math.max(d.a,d.b);
+ const sourceScale=Math.min(32,350/maxSource);
+ for(let y=0;y<d.a;y++)for(let x=0;x<d.a;x++){
+  const id=idx++, r=addRect(s,20+x*sourceScale,20+y*sourceScale,sourceScale,sourceScale,"#f6df8b");
+  r.dataset.idx=id;r.setAttribute("tabindex","0");r.setAttribute("role","button");r.setAttribute("aria-label",`ชิ้นส่วนจาก a หมายเลข ${id+1}`);
+  r.addEventListener("click",()=>selectPiece(id));r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectPiece(id)}});
+ }
+ const off=40+d.a*sourceScale;
+ for(let y=0;y<d.b;y++)for(let x=0;x<d.b;x++){
+  const id=idx++,r=addRect(s,off+x*sourceScale,20+y*sourceScale,sourceScale,sourceScale,"#e98b3a");
+  r.dataset.idx=id;r.setAttribute("tabindex","0");r.setAttribute("role","button");r.setAttribute("aria-label",`ชิ้นส่วนจาก b หมายเลข ${id+1}`);
+  r.addEventListener("click",()=>selectPiece(id));r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectPiece(id)}});
+ }
+ state.piece.total=idx;state.piece.targetCount=d.c2;
+ // Target is an empty c by c grid. Placed source pieces appear here.
+ const ts=Math.min(32,340/d.c);
+ for(let y=0;y<d.c;y++)for(let x=0;x<d.c;x++){
+  const cell=addRect(t,40+x*ts,40+y*ts,ts,ts,"#f7f4e6","#c5bfa9");cell.setAttribute("aria-hidden","true");
+ }
+ Object.keys(state.piece.placements).forEach(k=>{
+   const pos=state.piece.placements[k];if(pos)placeVisual(Number(k),pos);
+ });
+ function placeVisual(id,pos){
+   const color=id<d.a2?"#f6df8b":"#e98b3a";
+   const r=addRect(t,40+pos.x*ts,40+pos.y*ts,ts,ts,color,"#fff");
+   r.dataset.idx=id;
+   const rot=(state.piece.rotations[id]||0)*90;
+   r.setAttribute("transform",`rotate(${rot} ${40+pos.x*ts+ts/2} ${40+pos.y*ts+ts/2})`);
+   r.setAttribute("opacity",".92");
+ }
+}
+function selectPiece(i){
+ state.piece.selected=i;
+ $("pieceStatus").textContent=`เลือกชิ้นส่วนหมายเลข ${i+1} แล้ว ใช้ปุ่มย้ายไปขวา/ซ้าย หรือหมุนเพื่อทดลองจัดวาง`;
+ drawPieces(calc(state.a,state.b));
+}
+function nextEmptyTarget(){
+ const d=calc(state.a,state.b), used=new Set(Object.values(state.piece.placements||{}).map(p=>`${p.x},${p.y}`));
+ for(let y=0;y<d.c;y++)for(let x=0;x<d.c;x++)if(!used.has(`${x},${y}`))return{x,y};
+ return null;
+}
+function moveSelected(dir){
+ const id=state.piece.selected;
+ if(id==null){$("pieceStatus").textContent="กรุณาเลือกชิ้นส่วนก่อน";return}
+ state.piece.placements=state.piece.placements||{};
+ if(dir>0){
+   if(state.piece.placements[id]){$("pieceStatus").textContent="ชิ้นส่วนนี้อยู่ในพื้นที่เป้าหมายแล้ว";return}
+   const pos=nextEmptyTarget();
+   if(!pos){$("pieceStatus").textContent="พื้นที่เป้าหมายเต็มแล้ว";return}
+   state.piece.placements[id]=pos;
+   $("pieceStatus").textContent=`วางชิ้นส่วนหมายเลข ${id+1} ลงในพื้นที่เป้าหมายแล้ว`;
+ }else{
+   if(!state.piece.placements[id]){$("pieceStatus").textContent="ชิ้นส่วนนี้ยังอยู่ที่ต้นทาง";return}
+   delete state.piece.placements[id];
+   $("pieceStatus").textContent=`นำชิ้นส่วนหมายเลข ${id+1} กลับไปยังต้นทางแล้ว`;
+ }
+ drawPieces(calc(state.a,state.b));
+ saveLocal();
+}
+function rotateSelected(){
+ const id=state.piece.selected;
+ if(id==null){$("pieceStatus").textContent="กรุณาเลือกชิ้นส่วนก่อน";return}
+ state.piece.rotations=state.piece.rotations||{};
+ state.piece.rotations[id]=((state.piece.rotations[id]||0)+1)%4;
+ drawPieces(calc(state.a,state.b));
+ $("pieceStatus").textContent=`หมุนชิ้นส่วนหมายเลข ${id+1} แล้ว (การหมุนไม่เปลี่ยนพื้นที่ของชิ้นส่วน)`;
+ saveLocal();
+}
+function resetPieces(){
+ state.piece={selected:null,placements:{},rotations:{}};
+ drawPieces(calc(state.a,state.b));
+ $("pieceStatus").textContent="เริ่มการจัดชิ้นส่วนใหม่แล้ว";
+ saveLocal();
+}
+function autoPieces(){
+ const d=calc(state.a,state.b);
+ if(!isIntegerPythagorean(d)||d.c>16){$("pieceStatus").textContent="ยังไม่รองรับการจัดเรียงอัตโนมัติสำหรับค่าปัจจุบัน เพราะต้องเป็นกรณีจำนวนเต็มที่มี a²+b²=c² และ c ไม่เกิน 16";return}
+ state.piece.placements={};
+ let id=0;for(let y=0;y<d.c;y++)for(let x=0;x<d.c;x++)state.piece.placements[id++]={x,y};
+ state.piece.selected=null;drawPieces(d);saveLocal();
+ $("pieceStatus").textContent=`ตัวช่วยจัดชิ้นส่วนหน่วยครบ ${d.c2} ชิ้น เพื่อให้เห็นว่าพื้นที่ต้นทางรวมเท่ากับพื้นที่เป้าหมายในกรณีนี้`;
+}
+function init(){loadLocal();bind();bindPractice();setupTabs();updateAll();setTab("predict")}
+init();
+})();
+/* === SCRIPT END === */
+</script>
+</body>
+</html>
